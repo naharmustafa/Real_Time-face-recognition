@@ -35,7 +35,7 @@ flowchart LR
 
 Before you begin, ensure your local machine has the necessary tools installed.
 
-**Step 1:** Install Azure CLI
+**Step 1: Install Azure CLI**
 
 Open PowerShell as an Administrator and run:
 `$ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest -Uri https://aka.ms/installazurecliwindowsx64 -OutFile .\AzureCLI.msi; Start-Process msiexec.exe -Wait -ArgumentList '/I AzureCLI.msi /quiet'; Remove-Item .\AzureCLI.msi`
@@ -43,7 +43,7 @@ Open PowerShell as an Administrator and run:
 **Verify installation:**
 `az --version`
 
-**Step 2:** Login to Azure
+**Step 2: Login to Azure**
 `az login`
 
 - A browser window will open for authentication.
@@ -52,14 +52,14 @@ Open PowerShell as an Administrator and run:
 **Verify login:**
 `az account show`
 
-**Step 3:** List Available VMs
+**Step 3: List Available VMs**
 `az vm list -o table`
 
-**Step 4:** Install the SSH Extension for Azure CLI
+**Step 4: Install the SSH Extension for Azure CLI**
 `az extension add --name ssh --upgrade`
 
 ## 3. SSH Configuration
-**Step 5:** Create SSH Configuration File
+**Step 5: Create SSH Configuration File**
 Create the .ssh directory if it doesn’t exist:
 `mkdir $env:USERPROFILE\.ssh -Force`
 
@@ -68,7 +68,7 @@ Generate certificates and keys for your VM:
 
 This command creates an SSH configuration file at ~/.ssh/config along with required certificates and keys.
 
-**Step 6:** Add VM to SSH Config
+**Step 6: Add VM to SSH Config**
 
 Open the newly created SSH configuration file and add the following block (replace placeholders):
 ```
@@ -81,7 +81,7 @@ Host fusnet-mustafa
     IdentitiesOnly yes 
 ```
 
-**Step 7**: Test the VM Connection
+**Step 7: Test the VM Connection**
 
 From PowerShell, run:
 `az ssh vm -g fusnet-eus-dev-rg -n fusnet-eus-dev-app01-vm -- -l email_id`
