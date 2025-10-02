@@ -79,19 +79,13 @@ FN###
 
 | Code   | Name                        | Description                                           | Recommended Action                     |
 |--------|----------------------------|-------------------------------------------------------|---------------------------------------|
-
-### 1. Login / Authentication
 | FN001  | User Not Found               | User ID does not exist.                                | Check user ID.                         |
 | FN002  | Invalid Credentials          | Login failed due to wrong credentials.               | Verify username/password.              |
 | FN003  | Session Expired              | User session has expired.                              | Login again.                           |
 | FN004  | Unauthorized Access          | User does not have permission to access resource.    | Check roles and permissions.           |
-
-### 2. Project Creation
 | FN005  | Project Not Found            | Project ID does not exist.                             | Verify project ID.                     |
 | FN006  | Duplicate Project            | Project with same name already exists.                | Use a unique project name.             |
 | FN007  | Database Error               | General database failure.                              | Check database connectivity/logs.      |
-
-### 3. Submittal Upload
 | FN008  | Submittal Upload Failed      | Error during submittal upload.                        | Retry upload or check file format.    |
 | FN009  | File Too Large               | Uploaded file exceeds allowed size.                   | Reduce file size.                       |
 | FN010  | Unsupported File Type        | File type not allowed.                                 | Upload a supported file type.          |
@@ -99,15 +93,9 @@ FN###
 | FN012  | Missing Required Field       | Mandatory field not provided in request.               | Fill all required fields.              |
 | FN013  | Invalid Request Format       | Request body does not match expected format.           | Check request payload.                 |
 | FN014  | Invalid Field Value          | Field value does not match expected format/type.       | Correct the field value.               |
-
-### 4. OCR & Validation
 | FN015  | OCR Processing Error         | OCR service failed or document unreadable.            | Retry or check document.               |
 | FN016  | Validation Failed            | Document failed compliance validation.                | Review validation errors.              |
-
-### 5. Reviewer Approval
 | FN017  | Reviewer Approval Missing    | No reviewer assigned for approval checkpoint.         | Assign reviewer.                       |
-
-### 6. Compliance Report / Finalization
 | FN018  | Compliance Report Failed     | Generating compliance report failed.                  | Retry generation process.              |
 | FN019  | Service Timeout              | Backend service timed out.                              | Retry request or check service status. |
 | FN020  | External API Failure         | Integration with external API failed.                  | Check API response/logs.                |
