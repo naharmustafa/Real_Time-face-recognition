@@ -66,3 +66,39 @@ flowchart LR
 | `performance-impact`          | SLA/performance risk |
 | `idempotency-required`        | Must guarantee deterministic outputs |
 | `hitl-checkpoint`             | Human review point required |
+
+
+### Code Preparation
+- [ ] No direct cross-module references.  
+- [ ] Interfaces/contracts live in `Contracts/`.  
+- [ ] Test coverage > 80%.  
+- [ ] Module-specific exceptions exist.  
+- [ ] Logging categories are module-specific.
+
+
+```mermaid
+sequenceDiagram
+    participant API as API Layer
+    participant DOC as Document Processing
+    participant VAL as Validation
+    participant REP as Report Generation
+    participant AUD as Audit
+
+    API->>DOC: Upload Submittal (OCR + Split)
+    DOC-->>API: Processed Sections
+    API->>VAL: Validate Against Specs
+    VAL-->>API: Compliance Results
+    API->>REP: Generate Report
+    REP-->>API: Report PDF
+    API->>AUD: Log Transaction
+```
+
+
+A[Login via Entra ID] --> B[Create Project]
+   B --> C[Upload Submittal]
+   C --> D[OCR + Splitting]
+   D --> E[Validation Engine]
+   E --> F{Reviewer Checkpoint}
+   F -->|Approve| G[Generate Compliance Report]
+   F -->|Reject| H[Send Back for Fix]
+   G --> I[Audit + Archive]
