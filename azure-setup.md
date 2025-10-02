@@ -30,6 +30,7 @@ flowchart LR
     A -->|VS Code Remote SSH| B
     B -->|Services| C[(FastAPI:8000, React:3000, HTTP/HTTPS)]
 ```
+---
 
 ## 2. Initial Setup: Tools and Extensions
 
@@ -43,6 +44,8 @@ Open PowerShell as an Administrator and run:
 **Verify installation:**
 `az --version`
 
+---
+
 **Step 2: Login to Azure**
 `az login`
 
@@ -52,11 +55,17 @@ Open PowerShell as an Administrator and run:
 **Verify login:**
 `az account show`
 
+---
+
 **Step 3: List Available VMs**
 `az vm list -o table`
 
+---
+
 **Step 4: Install the SSH Extension for Azure CLI**
 `az extension add --name ssh --upgrade`
+
+---
 
 ## 3. SSH Configuration
 **Step 5: Create SSH Configuration File**
@@ -67,6 +76,8 @@ Generate certificates and keys for your VM:
 `az ssh config -g fusnet-eus-dev-rg -n fusnet-eus-dev-app01-vm --file "$env:USERPROFILE\.ssh\config"`
 
 This command creates an SSH configuration file at ~/.ssh/config along with required certificates and keys.
+
+---
 
 **Step 6: Add VM to SSH Config**
 
@@ -80,6 +91,7 @@ Host fusnet-mustafa
     IdentityFile "C:\Users\<windows-user>\.ssh\az_ssh_config\fusnet-eus-dev-rg-fusnet-eus-dev-app01-vm\id_rsa"
     IdentitiesOnly yes 
 ```
+---
 
 **Step 7: Test the VM Connection**
 
@@ -90,6 +102,7 @@ Expected output:
 ```Welcome to Ubuntu 20.04.6 LTS (GNU/Linux 5.15.0-1044-azure x86_64)
 mustafa@fusnet-eus-dev-app01-vm:~$ 
 ```
+---
 
 ## 4. VS Code Remote Development
 Install Required Extensions
@@ -110,6 +123,8 @@ Install Required Extensions
 - Select your configured host (e.g., fusnet-mustafa)
 > The first connection may take 30–60 seconds.
 
+---
+
 ## 5. Post-Connection VM Configuration
 
 After connecting to the VM with VS Code, install Miniconda:
@@ -119,6 +134,8 @@ bash Miniconda3-latest-Linux-x86_64.sh -b -p $HOME/miniconda3
 echo 'export PATH="$HOME/miniconda3/bin:$PATH"' >> ~/.bashrc
 source ~/.bashrc
 ```
+
+---
 
 ## 6. Important Note: SSH Key Renewal
 
