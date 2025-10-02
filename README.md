@@ -94,7 +94,9 @@ sequenceDiagram
 ```
 
 
-A[Login via Entra ID] --> B[Create Project]
+```mermaid
+flowchart TD
+   A[Login via Entra ID] --> B[Create Project]
    B --> C[Upload Submittal]
    C --> D[OCR + Splitting]
    D --> E[Validation Engine]
@@ -102,3 +104,4 @@ A[Login via Entra ID] --> B[Create Project]
    F -->|Approve| G[Generate Compliance Report]
    F -->|Reject| H[Send Back for Fix]
    G --> I[Audit + Archive]
+```
