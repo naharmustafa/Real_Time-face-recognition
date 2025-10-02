@@ -70,7 +70,7 @@ Examples in our project:
 
 ---
 
-## Incident Runbooks
+## 📂 Incident Runbooks
 
 - **[Data Recovery](./docs/runbooks/data-recovery.md)** – for DB restore and Cosmos DB failover.  
 - **[Rollback Procedures](./rollback-procedures.md)** – for reverting deployments.  
@@ -78,7 +78,7 @@ Examples in our project:
 
 ---
 
-## Quick Checklist for On-Call Engineer
+## ✅ Quick Checklist for On-Call Engineer
 
 1. Acknowledge alert.  
 2. Classify severity (SEV-1 to SEV-4).  
@@ -90,7 +90,7 @@ Examples in our project:
 
 ---
 
-##  Example Incident Log (Template)
+## 📝 Example Incident Log (Template)
 
 ```yaml
 incident_id: INC-2025-001
