@@ -47,15 +47,15 @@ FusionNet uses a **prefix + number** format for custom errors:
 
 FN###
 
-Where:
+- **FN** → FusionNet  
+- **###** → Unique number identifying the error  
 
-- **`FN`** → Stands for **FusionNet** (project-specific).  
-- **`###`** → A unique numeric identifier (e.g., `001`, `002`).  
+**Example:** `FN002` → Submittal Upload Failed  
 
-**Why we use `FN` instead of just numbers:**  
-- Prevents confusion with HTTP codes.  
-- Easy to identify the source of the error in logs or API responses.  
-- Makes debugging faster for developers.
+**Why:**  
+- Distinguishes custom errors from HTTP codes  
+- Makes debugging easier  
+- Ensures consistent error handling  
 
 ---
 
@@ -63,25 +63,58 @@ Where:
 
 | Status Code | Name                  | Description                                          | Recommended Action                 |
 |------------|----------------------|------------------------------------------------------|-----------------------------------|
-| 400        | Bad Request           | The request was invalid or cannot be served.        | Check the request parameters.     |
-| 401        | Unauthorized          | Authentication is required and has failed.         | Provide valid credentials.        |
-| 403        | Forbidden             | The request is understood, but access is denied.   | Ensure you have permission.       |
-| 404        | Not Found             | The requested resource could not be found.         | Verify the URL or resource ID.    |
-| 500        | Internal Server Error | An unexpected error occurred on the server.        | Check server logs for details.    |
-| 503        | Service Unavailable   | The server is currently unavailable.               | Retry after some time.            |
+| 400        | Bad Request           | The request is invalid.                              | Check input parameters.           |
+| 401        | Unauthorized          | Login required or failed.                            | Provide valid credentials.        |
+| 403        | Forbidden             | Access denied.                                      | Check user permissions.           |
+| 404        | Not Found             | Resource does not exist.                             | Verify URL or resource ID.        |
+| 409        | Conflict              | Resource conflict (e.g., duplicate entry).          | Resolve conflict before retry.    |
+| 422        | Unprocessable Entity  | Validation failed (e.g., mandatory fields missing). | Fix the validation errors.        |
+| 500        | Internal Server Error | Unexpected server error.                             | Check server logs.                |
+| 503        | Service Unavailable   | Temporary server unavailability.                     | Retry later.                      |
 
 ---
 
-## Application Error Codes
+## FusionNet Application Error Codes
 
-| Code   | Name                       | Description                                           | Recommended Action                     |
+
+| Code   | Name                        | Description                                           | Recommended Action                     |
 |--------|----------------------------|-------------------------------------------------------|---------------------------------------|
-| FN001  | Project Not Found           | The specified project ID does not exist.             | Verify the project ID.                |
-| FN002  | Submittal Upload Failed     | Error occurred while uploading the submittal.        | Retry the upload or check file format.|
-| FN003  | OCR Processing Error        | Error occurred during OCR processing.                | Check the document or retry later.    |
-| FN004  | Validation Failed           | Document failed compliance validation.               | Review validation errors.             |
-| FN005  | Reviewer Approval Missing   | No reviewer assigned for the checkpoint.             | Assign a reviewer.                    |
-| FN006  | Compliance Report Failed    | Error generating compliance report.                  | Retry the generation process.         |
+
+### 1. Login / Authentication
+| FN001  | User Not Found               | User ID does not exist.                                | Check user ID.                         |
+| FN002  | Invalid Credentials          | Login failed due to wrong credentials.               | Verify username/password.              |
+| FN003  | Session Expired              | User session has expired.                              | Login again.                           |
+| FN004  | Unauthorized Access          | User does not have permission to access resource.    | Check roles and permissions.           |
+
+### 2. Project Creation
+| FN005  | Project Not Found            | Project ID does not exist.                             | Verify project ID.                     |
+| FN006  | Duplicate Project            | Project with same name already exists.                | Use a unique project name.             |
+| FN007  | Database Error               | General database failure.                              | Check database connectivity/logs.      |
+
+### 3. Submittal Upload
+| FN008  | Submittal Upload Failed      | Error during submittal upload.                        | Retry upload or check file format.    |
+| FN009  | File Too Large               | Uploaded file exceeds allowed size.                   | Reduce file size.                       |
+| FN010  | Unsupported File Type        | File type not allowed.                                 | Upload a supported file type.          |
+| FN011  | Duplicate Submittal          | Submittal already exists for this project.             | Check previous submissions.            |
+| FN012  | Missing Required Field       | Mandatory field not provided in request.               | Fill all required fields.              |
+| FN013  | Invalid Request Format       | Request body does not match expected format.           | Check request payload.                 |
+| FN014  | Invalid Field Value          | Field value does not match expected format/type.       | Correct the field value.               |
+
+### 4. OCR & Validation
+| FN015  | OCR Processing Error         | OCR service failed or document unreadable.            | Retry or check document.               |
+| FN016  | Validation Failed            | Document failed compliance validation.                | Review validation errors.              |
+
+### 5. Reviewer Approval
+| FN017  | Reviewer Approval Missing    | No reviewer assigned for approval checkpoint.         | Assign reviewer.                       |
+
+### 6. Compliance Report / Finalization
+| FN018  | Compliance Report Failed     | Generating compliance report failed.                  | Retry generation process.              |
+| FN019  | Service Timeout              | Backend service timed out.                              | Retry request or check service status. |
+| FN020  | External API Failure         | Integration with external API failed.                  | Check API response/logs.                |
+
+> These codes cover all common backend errors in the FusionNet workflow, from **login** → **project creation** → **document upload** → **OCR/Validation** → **review/compliance** → **report generation**.
+
+---
 
 **Explanation for Developers:**  
 - Each error code represents a **specific scenario** in the backend.  
