@@ -52,3 +52,17 @@ flowchart LR
     Application --> API
     API -->|Response| User
 ```
+
+| Label                    | Purpose |
+|---------------------------|---------|
+| `module:review-orchestration` | Tracks orchestration module |
+| `module:document-processing`  | Tracks OCR/splitting |
+| `module:validation`           | Tracks spec matching & compliance |
+| `module:report-generation`    | Tracks reporting |
+| `module:audit`                | Tracks auditing |
+| `extraction-ready`            | Module is microservice-ready |
+| `needs-refactor`              | Cleanup required before extraction |
+| `has-shared-db`               | DB schema shared (technical debt) |
+| `performance-impact`          | SLA/performance risk |
+| `idempotency-required`        | Must guarantee deterministic outputs |
+| `hitl-checkpoint`             | Human review point required |
