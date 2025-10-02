@@ -40,3 +40,15 @@ sequenceDiagram
     User->>FusionNetAPI: API requests with Bearer token
     FusionNetAPI-->>User: Validated response
 ```
+
+```mermaid
+flowchart LR
+    User[Frontend / Client] -->|HTTP| API
+    API --> Application
+    Application --> Core
+    Application --> Infrastructure
+    Infrastructure --> External[CosmosDB / Postgres / Entra ID / AI Services]
+    Core --> Application
+    Application --> API
+    API -->|Response| User
+```
