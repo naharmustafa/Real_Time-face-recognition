@@ -9,30 +9,30 @@ This document lists all environment variables used in **FusionNet Submittal MVP*
 ### 1.1 Azure & Infrastructure
 | Variable | Description | How to Obtain |
 |----------|-------------|---------------|
-| `AZURE_CREDENTIALS` | JSON credentials for Azure CLI / GitHub Actions | Create a service principal in Azure AD and export its JSON credentials |
-| `AZURE_SUBSCRIPTION_ID` | Azure subscription ID | Azure Portal → Subscriptions → Subscription ID |
-| `AZURE_TENANT_ID` | Azure tenant ID | Azure Portal → Azure Active Directory → Tenant ID |
-| `AZURE_CLIENT_ID` | Azure service principal client ID | From Azure service principal created for CI/CD |
-| `AZURE_CLIENT_SECRET` | Azure service principal secret | From Azure service principal created for CI/CD |
+| `AZURE_CREDENTIALS`  | JSON credentials for Azure CLI / GitHub Actions | Create a service principal in Azure AD and export its JSON credentials |
+| `AZURE_SUBSCRIPTION_ID`   | Azure subscription ID | Azure Portal → Subscriptions → Subscription ID |
+| `AZURE_TENANT_ID`         | Azure tenant ID | Azure Portal → Azure Active Directory → Tenant ID |
+| `AZURE_CLIENT_ID`         | Azure service principal client ID | From Azure service principal created for CI/CD |
+| `AZURE_CLIENT_SECRET`     | Azure service principal secret | From Azure service principal created for CI/CD |
 | `COSMOS_CONNECTION_STRING` | Cosmos DB connection string | Azure Portal → Cosmos DB → Keys → Connection String |
-| `COSMOS_DATABASE_NAME` | Cosmos DB database name | Set when creating the database |
+| `COSMOS_DATABASE_NAME`     | Cosmos DB database name | Set when creating the database |
 | `POSTGRES_CONNECTION_STRING` | Connection string for PostgreSQL | Azure Portal → PostgreSQL server → Connection Strings |
-| `POSTGRES_PASSWORD` | PostgreSQL password | Set when creating PostgreSQL server |
-| `STORAGE_ACCOUNT_CONNECTION_STRING` | Azure Storage account connection string | Azure Portal → Storage account → Access keys |
-| `SERVICE_BUS_CONNECTION_STRING` | Azure Service Bus connection string | Azure Portal → Service Bus namespace → Shared access keys |
+| `POSTGRES_PASSWORD`          | PostgreSQL password | Set when creating PostgreSQL server |
+| `STORAGE_ACCOUNT_CONNECTION_STRING`   | Azure Storage account connection string | Azure Portal → Storage account → Access keys |
+| `SERVICE_BUS_CONNECTION_STRING`       | Azure Service Bus connection string | Azure Portal → Service Bus namespace → Shared access keys |
 
 ### 1.2 AI Services
-| Variable | Description | How to Obtain |
-|----------|-------------|---------------|
-| `CLAUDE_API_KEY_OPUS` | Claude Opus API key | Obtain from Claude AI account |
-| `CLAUDE_API_KEY_SONNET` | Claude Sonnet API key | Obtain from Claude AI account |
-| `CLAUDE_OPUS_ENDPOINT` | Claude Opus API endpoint | Provided by Claude AI service |
-| `CLAUDE_SONNET_ENDPOINT` | Claude Sonnet API endpoint | Provided by Claude AI service |
-| `OPENAI_API_KEY` | OpenAI API key | OpenAI Dashboard → API Keys |
-| `OPENAI_ENDPOINT` | OpenAI API endpoint | OpenAI API documentation |
-| `GOOGLE_VISION_API_KEY` | Google Vision API key | Google Cloud Console → APIs & Services → Credentials |
-| `AZURE_DOCUMENT_INTELLIGENCE_KEY` | Azure Document Intelligence API key | Azure Portal → Cognitive Services → Keys |
-| `AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT` | Azure Document Intelligence endpoint | Azure Portal → Cognitive Services → Endpoint |
+| Variable                                  | Description               | How to Obtain |
+|-------------------------------------------|---------------------------|---------------|
+| `CLAUDE_API_KEY_OPUS`                     | Claude Opus API key       | Obtain from Claude AI account |
+| `CLAUDE_API_KEY_SONNET`                   | Claude Sonnet API key     | Obtain from Claude AI account |
+| `CLAUDE_OPUS_ENDPOINT`                    | Claude Opus API endpoint  | Provided by Claude AI service |
+| `CLAUDE_SONNET_ENDPOINT`                  | Claude Sonnet API endpoint| Provided by Claude AI service |
+| `OPENAI_API_KEY`                          | OpenAI API key            | OpenAI Dashboard → API Keys |
+| `OPENAI_ENDPOINT`                         | OpenAI API endpoint       | OpenAI API documentation |
+| `GOOGLE_VISION_API_KEY`                   | Google Vision API key     | Google Cloud Console → APIs & Services → Credentials |
+| `AZURE_DOCUMENT_INTELLIGENCE_KEY`         | Azure Document Intelligence API key | Azure Portal → Cognitive Services → Keys |
+| `AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT`    | Azure Document Intelligence endpoint | Azure Portal → Cognitive Services → Endpoint |
 
 ### 1.3 Microsoft Entra ID (Azure AD)
 | Variable | Description | How to Obtain |
@@ -64,10 +64,10 @@ This document lists all environment variables used in **FusionNet Submittal MVP*
 | `KEY_VAULT_NAME` | Azure Key Vault name | Azure Portal → Key Vault → Name |
 
 ### 1.6 Notifications
-| Variable | Description | How to Obtain |
-|----------|-------------|---------------|
-| `TEAMS_WEBHOOK_URL` | Teams webhook for alerts | Microsoft Teams → Channel → Connectors → Incoming Webhook |
-| `ALERT_EMAIL_LIST` | Comma-separated alert emails | Maintain team emails |
+| Variable           | Description                  | How to Obtain                                             |
+|--------------------|------------------------------|-----------------------------------------------------------|
+| `TEAMS_WEBHOOK_URL`| Teams webhook for alerts     | Microsoft Teams → Channel → Connectors → Incoming Webhook |
+| `ALERT_EMAIL_LIST` | Comma-separated alert emails | Maintain team emails                                      |
 
 ### 1.7 Claude Code Specific
 | Variable | Description | How to Obtain / Configure |
@@ -85,40 +85,40 @@ This document lists all environment variables used in **FusionNet Submittal MVP*
 GitHub environments: **development**, **staging**, **production**.
 
 ### 2.1 Development Environment
-| Variable | Value | Notes |
-|----------|-------|------|
-| `APP_SERVICE_NAME` | fusionnet-dev | Azure App Service name |
-| `RESOURCE_GROUP_NAME` | rg-fusionnet-dev | Azure resource group |
-| `COSMOS_DATABASE_NAME` | fusionnet-dev-db | Cosmos DB database |
-| `POSTGRES_DATABASE_NAME` | fusionnet_dev | PostgreSQL database |
-| `HANGFIRE_DASHBOARD_URL` | https://fusionnet-dev.azurewebsites.net/hangfire | Background job dashboard |
-| `ENVIRONMENT_TYPE` | development | Application environment |
-| `ENABLE_DEBUG_LOGGING` | true | Enable verbose logs |
-| `ENABLE_SWAGGER` | true | Enable API documentation UI |
+| Variable                      | Value                                             | Notes                      |
+|-------------------------------|---------------------------------------------------|----------------------------|
+| `APP_SERVICE_NAME`            | fusionnet-dev                                     | Azure App Service name     |
+| `RESOURCE_GROUP_NAME`         | rg-fusionnet-dev                                  | Azure resource group       |
+| `COSMOS_DATABASE_NAME`        | fusionnet-dev-db                                  | Cosmos DB database         |
+| `POSTGRES_DATABASE_NAME`      | fusionnet_dev                                     | PostgreSQL database        |
+| `HANGFIRE_DASHBOARD_URL`      | https://fusionnet-dev.azurewebsites.net/hangfire  | Background job dashboard   |
+| `ENVIRONMENT_TYPE`            | development                                       | Application environment    |
+| `ENABLE_DEBUG_LOGGING`        | true                                              | Enable verbose logs        |
+| `ENABLE_SWAGGER`              | true                                              | Enable API documentation UI|
 
 ### 2.2 Staging Environment
-| Variable | Value | Notes |
-|----------|-------|------|
-| `APP_SERVICE_NAME` | fusionnet-staging | Azure App Service name |
-| `RESOURCE_GROUP_NAME` | rg-fusionnet-staging | Azure resource group |
-| `COSMOS_DATABASE_NAME` | fusionnet-staging-db | Cosmos DB database |
-| `POSTGRES_DATABASE_NAME` | fusionnet_staging | PostgreSQL database |
-| `HANGFIRE_DASHBOARD_URL` | https://fusionnet-staging.azurewebsites.net/hangfire | Background job dashboard |
-| `ENVIRONMENT_TYPE` | staging | Application environment |
-| `ENABLE_DEBUG_LOGGING` | false | Disable debug logs |
-| `ENABLE_SWAGGER` | true | Enable API documentation UI |
+| Variable                  | Value                                               | Notes                      |
+|---------------------------|-----------------------------------------------------|----------------------------|
+| `APP_SERVICE_NAME`        | fusionnet-staging                                   | Azure App Service name     |
+| `RESOURCE_GROUP_NAME`     | rg-fusionnet-staging                                | Azure resource group       |
+| `COSMOS_DATABASE_NAME`    | fusionnet-staging-db                                | Cosmos DB database         |
+| `POSTGRES_DATABASE_NAME`  | fusionnet_staging                                   | PostgreSQL database        |
+| `HANGFIRE_DASHBOARD_URL`  | https://fusionnet-staging.azurewebsites.net/hangfire| Background job dashboard   |
+| `ENVIRONMENT_TYPE`        | staging                                             | Application environment    |
+| `ENABLE_DEBUG_LOGGING`    | false                                               | Disable debug logs         |
+| `ENABLE_SWAGGER`          | true                                                | Enable API documentation UI|
 
 ### 2.3 Production Environment
-| Variable | Value | Notes |
-|----------|-------|------|
-| `APP_SERVICE_NAME` | fusionnet-prod | Azure App Service name |
-| `RESOURCE_GROUP_NAME` | rg-fusionnet-prod | Azure resource group |
-| `COSMOS_DATABASE_NAME` | fusionnet-prod-db | Cosmos DB database |
-| `POSTGRES_DATABASE_NAME` | fusionnet_prod | PostgreSQL database |
-| `HANGFIRE_DASHBOARD_URL` | https://fusionnet.azurewebsites.net/hangfire | Background job dashboard |
-| `ENVIRONMENT_TYPE` | production | Application environment |
-| `ENABLE_DEBUG_LOGGING` | false | Disable debug logs |
-| `ENABLE_SWAGGER` | false | Disable API documentation UI |
+| Variable                 | Value                                             | Notes                      |
+|--------------------------|---------------------------------------------------|----------------------------|
+| `APP_SERVICE_NAME`       | fusionnet-prod                                    | Azure App Service name     |
+| `RESOURCE_GROUP_NAME`    | rg-fusionnet-prod                                 | Azure resource group       |
+| `COSMOS_DATABASE_NAME`   | fusionnet-prod-db                                 | Cosmos DB database         |
+| `POSTGRES_DATABASE_NAME` | fusionnet_prod                                    | PostgreSQL database        |
+| `HANGFIRE_DASHBOARD_URL` | https://fusionnet.azurewebsites.net/hangfire      | Background job dashboard   |
+| `ENVIRONMENT_TYPE`       | production                                        | Application environment    |
+| `ENABLE_DEBUG_LOGGING`   | false                                             | Disable debug logs         |
+| `ENABLE_SWAGGER`         | false                                             | Disable API documentation UI |
 
 ---
 
