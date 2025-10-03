@@ -77,28 +77,28 @@ FN###
 ## FusionNet Application Error Codes
 
 
-| Code   | Name                        | Description                                           | Recommended Action                     |
-|--------|----------------------------|-------------------------------------------------------|---------------------------------------|
+| Code   | Name                         | Description                                            | Recommended Action                     |
+|--------|------------------------------|--------------------------------------------------------|----------------------------------------|
 | FN001  | User Not Found               | User ID does not exist.                                | Check user ID.                         |
-| FN002  | Invalid Credentials          | Login failed due to wrong credentials.               | Verify username/password.              |
+| FN002  | Invalid Credentials          | Login failed due to wrong credentials.                 | Not a Registered User                  |
 | FN003  | Session Expired              | User session has expired.                              | Login again.                           |
-| FN004  | Unauthorized Access          | User does not have permission to access resource.    | Check roles and permissions.           |
+| FN004  | Unauthorized Access          | User does not have permission to access resource.      | Check roles and permissions.           |
 | FN005  | Project Not Found            | Project ID does not exist.                             | Verify project ID.                     |
-| FN006  | Duplicate Project            | Project with same name already exists.                | Use a unique project name.             |
+| FN006  | Duplicate Project            | Project with same name already exists.                 | Use a unique project name.             |
 | FN007  | Database Error               | General database failure.                              | Check database connectivity/logs.      |
-| FN008  | Submittal Upload Failed      | Error during submittal upload.                        | Retry upload or check file format.    |
-| FN009  | File Too Large               | Uploaded file exceeds allowed size.                   | Reduce file size.                       |
+| FN008  | Submittal Upload Failed      | Error during submittal upload.                         | Retry upload or check file format.     |
+| FN009  | File Too Large               | Uploaded file exceeds allowed size.                    | Reduce file size.                      |
 | FN010  | Unsupported File Type        | File type not allowed.                                 | Upload a supported file type.          |
 | FN011  | Duplicate Submittal          | Submittal already exists for this project.             | Check previous submissions.            |
 | FN012  | Missing Required Field       | Mandatory field not provided in request.               | Fill all required fields.              |
 | FN013  | Invalid Request Format       | Request body does not match expected format.           | Check request payload.                 |
 | FN014  | Invalid Field Value          | Field value does not match expected format/type.       | Correct the field value.               |
-| FN015  | OCR Processing Error         | OCR service failed or document unreadable.            | Retry or check document.               |
-| FN016  | Validation Failed            | Document failed compliance validation.                | Review validation errors.              |
-| FN017  | Reviewer Approval Missing    | No reviewer assigned for approval checkpoint.         | Assign reviewer.                       |
-| FN018  | Compliance Report Failed     | Generating compliance report failed.                  | Retry generation process.              |
-| FN019  | Service Timeout              | Backend service timed out.                              | Retry request or check service status. |
-| FN020  | External API Failure         | Integration with external API failed.                  | Check API response/logs.                |
+| FN015  | OCR Processing Error         | OCR service failed or document unreadable.             | Retry or check document.               |
+| FN016  | Validation Failed            | Document failed compliance validation.                 | Review validation errors.              |
+| FN017  | Reviewer Approval Missing    | No reviewer assigned for approval checkpoint.          | Assign reviewer.                       |
+| FN018  | Compliance Report Failed     | Generating compliance report failed.                   | Retry generation process.              |
+| FN019  | Service Timeout              | Backend service timed out.                             | Retry request or check service status. |
+| FN020  | External API Failure         | Integration with external API failed.                  | Check API response/logs.               |
 
 > These codes cover all common backend errors in the FusionNet workflow, from **login** → **project creation** → **document upload** → **OCR/Validation** → **review/compliance** → **report generation**.
 
@@ -119,10 +119,10 @@ FN###
 
    ```json
    {
-     "httpStatus": 400,
-     "errorCode": "FN002",
-     "message": "Submittal upload failed. Please check the file format."
-   }
+  "httpStatus": 404,
+  "errorCode": "FN001",
+  "message": "User with ID 12345 does not exist."
+  }
    ```
 
 2. **Frontend**:
@@ -135,21 +135,21 @@ FN###
 
 
 **Examples**
-**Example 1**: Submittal Upload Error
+**Example 1**: Invalid Credentials
 
 ```json
 {
-  "httpStatus": 400,
+  "httpStatus": 401,
   "errorCode": "FN002",
-  "message": "Submittal upload failed. Please check the file format and try again."
+  "message": "Login failed due to incorrect username or password."
 }
 ```
 
-**Example 2**: Validation Error
+**Example 2**: Validation Failed
 ```json
 {
   "httpStatus": 422,
-  "errorCode": "FN004",
+  "errorCode": "FN016",
   "message": "Document failed validation due to missing mandatory fields."
 }
 ```
@@ -158,12 +158,29 @@ FN###
 ``` json
 {
   "httpStatus": 404,
-  "errorCode": "FN001",
-  "message": "Project with ID 12345 does not exist."
+  "errorCode": "FN005",
+  "message": "Project with ID 98765 does not exist."
+}
+```
+**Example 4**: Submittal Upload Failed
+```json
+{
+  "httpStatus": 400,
+  "errorCode": "FN008",
+  "message": "Submittal upload failed. Please check the file format and try again."
 }
 ```
 
-## Notes for Onboarding Developers:
+**Example 5**: Compliance Report Failed
+```json
+{
+  "httpStatus": 500,
+  "errorCode": "FN018",
+  "message": "Failed to generate compliance report. Please retry."
+}
+```
+
+## Notes for Developers:
 
 - Always use the provided error codes; don’t create new numbers without approval.
 - Check both HTTP status and application error code when debugging issues.
