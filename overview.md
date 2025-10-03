@@ -150,11 +150,11 @@ fusionnet-submittal-mvp/
 - Check if data exists in splitted_data table.
 - If present → Fetch and pass directly to Splitting Agent.
 - If not present :
-- **Analyzer Master Agent runs:**
-   - Identifies document context and document type from OCR results.
-- **Construction Agent:**
-   - Generates splitted metadata for the next module.
-   - Saves metadata into database.
+   - **Analyzer Master Agent runs:**
+      - Identifies document context and document type from OCR results.
+   - **Construction Agent:**
+      - Generates splitted metadata for the next module.
+      - Saves metadata into database.
 **7. Splitting & Validation →** Continue workflow with splitting, compliance validation, HITL review.
 **8. Report Generation →** Compliance report produced.
 **9. Audit Logging →** All actions stored for traceability.
@@ -164,44 +164,44 @@ fusionnet-submittal-mvp/
 ### flowchart TD
 ```mermaid
 flowchart TD
-   A[Login via Entra ID] --> B[Create Project (with type)]
-   B --> C[Upload Submittal]
-   C --> D[Immediate OCR + Store in Postgres]
-   D --> E[Orchestrator Agent Starts]
+    A[Login via Entra ID] --> B[Create Project: Type]
+    B --> C[Upload Submittal]
+    C --> D[Immediate OCR & Store in Postgres]
+    D --> E[Orchestrator Agent Starts]
 
-   E -->|Submittals Review| F{Check splitted_data table?}
-   F -->|Yes| G[Fetch Data -> Splitting Agent]
-   F -->|No| H[Analyzer Master Agent -> Detect Context & Type]
-   H --> I[Construction Agent -> Create Splitted Metadata + Store in DB]
-   I --> G
+    E -->|Submittals Review| F{Check splitted_data table?}
+    F -->|Yes| G[Fetch Data -> Splitting Agent]
+    F -->|No| H[Analyzer Master Agent: Detect Context & Type]
+    H --> I[Construction Agent: Create Splitted Metadata & Store]
+    I --> G
 
-   G --> J[Validation Engine]
-   J --> K{Reviewer Checkpoint}
-   K -->|Approve| L[Generate Compliance Report]
-   K -->|Reject| M[Send Back for Fix]
-   L --> N[Audit + Archive]
+    G --> J[Validation Engine]
+    J --> K{Reviewer Checkpoint}
+    K -->|Approve| L[Generate Compliance Report]
+    K -->|Reject| M[Send Back for Fix]
+    L --> N[Audit & Archive]
 ```
 
 ---
 
 ### Tech Stack
 
-**- Frontend:** Angular 16, TypeScript.
-**- Backend:** .NET 8 (C#), ASP.NET Core Web API.
-**- Databases:** PostgreSQL, Azure CosmosDB.
-**- AI Services:** Python (FastAPI, PyTorch, OpenAI/Claude APIs).
-**- Authentication:** Microsoft Entra ID (OIDC).
-**- CI/CD:** GitHub Actions, Docker, Azure App Service.
-**- Security:** Snyk, TruffleHog, Dependabot, SonarQube.
-**- Monitoring:** Azure Application Insights, Teams Alerts.
+- **Frontend:** Angular 16, TypeScript.
+- **Backend:** .NET 8 (C#), ASP.NET Core Web API.
+- **Databases:** PostgreSQL, Azure CosmosDB.
+- **AI Services:** Python (FastAPI, PyTorch, OpenAI/Claude APIs).
+- **Authentication:** Microsoft Entra ID (OIDC).
+- **CI/CD:** GitHub Actions, Docker, Azure App Service.
+- **Security:** Snyk, TruffleHog, Dependabot, SonarQube.
+- **Monitoring:** Azure Application Insights, Teams Alerts.
 
 ---
 
 ### Developer Practices
 
-**- Branching Strategy:** main (stable), develop (active dev).
-**- Commit Messages:** Conventional commits (feat(module): description).
-**- Code Reviews:** Enforced via CODEOWNERS + PR approvals.
-**- Testing:** >80% coverage required for core modules.
-**- Documentation:** Every feature/update must include docs & ADRs.
-**- Secrets:** Never in code → always in GitHub Secrets / Key Vault.
+- **Branching Strategy:** main (stable), develop (active dev).
+- **Commit Messages:** Conventional commits (feat(module): description).
+- **Code Reviews:** Enforced via CODEOWNERS + PR approvals.
+- **Testing:** >80% coverage required for core modules.
+- **Documentation:** Every feature/update must include docs & ADRs.
+- **Secrets:** Never in code → always in GitHub Secrets / Key Vault.
