@@ -19,7 +19,8 @@ The following diagram illustrates the VM configuration and the connection flow b
   - HTTP (80)  
   - HTTPS (443)  
   - FastAPI (8000)  
-  - React (3000)  
+  - React (3000)
+  - PostgreSQL (5432)  
 
 ### Connection Flow
 Your local machine can connect to the VM via **SSH** from a command-line interface (PowerShell) or through **VS Code’s Remote Development extensions**. Both methods use the same SSH protocol to establish a secure connection.
@@ -28,18 +29,18 @@ Your local machine can connect to the VM via **SSH** from a command-line interfa
 flowchart LR
     A[Local Machine] -->|SSH| B[Azure VM]
     A -->|VS Code Remote SSH| B
-    B -->|Services| C[(FastAPI:8000, React:3000, HTTP/HTTPS)]
+    B -->|Services| C[(FastAPI:8000, React:3000, HTTP/HTTPS , PostgreSQL:5432)]
 ```
 ---
 
-## 2. Initial Setup: Tools and Extensions
+## 2. Initial Local Setup: Tools and Extensions
 
 Before you begin, ensure your local machine has the necessary tools installed.
 
 **Step 1: Install Azure CLI**
 
 Open PowerShell as an Administrator and run:
-`$ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest -Uri https://aka.ms/installazurecliwindowsx64 -OutFile .\AzureCLI.msi; Start-Process msiexec.exe -Wait -ArgumentList '/I AzureCLI.msi /quiet'; Remove-Item .\AzureCLI.msi`
+``` $ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest -Uri https://aka.ms/installazurecliwindowsx64 -OutFile .\AzureCLI.msi; Start-Process msiexec.exe -Wait -ArgumentList '/I AzureCLI.msi /quiet'; Remove-Item .\AzureCLI.msi ```
 
 **Verify installation:**
 `az --version`
@@ -100,7 +101,7 @@ From PowerShell, run:
 
 Expected output:
 ```Welcome to Ubuntu 20.04.6 LTS (GNU/Linux 5.15.0-1044-azure x86_64)
-mustafa@fusnet-eus-dev-app01-vm:~$ 
+User@fusnet-eus-dev-app01-vm:~$ 
 ```
 ---
 
@@ -115,7 +116,7 @@ Install Required Extensions
 - Open VS Code and press Ctrl+Shift+P
 - Run: Remote-SSH: Connect to Host
 - Select Configure SSH Hosts...
-- Choose: C:\Users\<username>\.ssh\config
+- Choose: C:/Users/<username>/.ssh/config
 
 **Connect After Setup**
 - Press Ctrl+Shift+P
