@@ -36,7 +36,7 @@ FusionNet follows a **monolith-first strategy** for the MVP phase.
 ---
 
 ## 🏗️ Repository Structure
-`
+```
 fusionnet-submittal-mvp/
 ├── frontend/           # Angular application
 ├── backend/            # .NET Core (Domain, Application, Infrastructure, API)
@@ -47,7 +47,7 @@ fusionnet-submittal-mvp/
 ├── scripts/            # Setup, validation, migration helpers
 ├── tools/              # Validators for module boundaries & prompts
 └── .github/            # CI/CD workflows (build, deploy, security scanning)
-`
+```
 ---
 
 ## Key Architectural Concepts
