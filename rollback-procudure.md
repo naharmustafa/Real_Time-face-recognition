@@ -77,13 +77,13 @@ Before rolling back:
 
 ## 5. Post-Rollback Steps
 
-📌 Confirm system is fully functional.
-📌 Notify stakeholders of rollback completion.
-📌 Open a post-mortem incident report including:
+- 📌 Confirm system is fully functional.
+- 📌 Notify stakeholders of rollback completion.
+- 📌 Open a post-mortem incident report including:
     - Root cause
     - Logs & monitoring evidence
     - Fix plan
-📌 Update rollback documentation if new gaps are discovered.
+- 📌 Update rollback documentation if new gaps are discovered.
 
 ---
 
