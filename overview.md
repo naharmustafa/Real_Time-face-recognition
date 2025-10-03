@@ -116,8 +116,6 @@ fusionnet-submittal-mvp/
   - Stores prompt templates, validation tests, examples, and deterministic output validators.
   - Supports AI-driven compliance checks.
   
-  ---
-  
   #### Tests
   **Organized by module:**
   - FusionNet.Core.Tests → Domain logic.
