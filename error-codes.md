@@ -50,7 +50,7 @@ FN###
 - **FN** → FusionNet  
 - **###** → Unique number identifying the error  
 
-**Example:** `FN002` → Submittal Upload Failed  
+**Example:** `FN008` → Submittal Upload Failed  
 
 **Why:**  
 - Distinguishes custom errors from HTTP codes  
@@ -118,11 +118,11 @@ FN###
    - Example:
 
    ```json
-   {
-  "httpStatus": 404,
-  "errorCode": "FN001",
-  "message": "User with ID 12345 does not exist."
-  }
+    {
+    "httpStatus": 404,
+    "errorCode": "FN001",
+    "message": "User with ID 12345 does not exist."
+    }
    ```
 
 2. **Frontend**:
