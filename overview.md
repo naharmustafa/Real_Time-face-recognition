@@ -36,7 +36,7 @@ FusionNet follows a **monolith-first strategy** for the MVP phase.
 ---
 
 ## 🏗️ Repository Structure
-```
+
 fusionnet-submittal-mvp/
 ├── frontend/           # Angular application
 ├── backend/            # .NET Core (Domain, Application, Infrastructure, API)
@@ -47,7 +47,7 @@ fusionnet-submittal-mvp/
 ├── scripts/            # Setup, validation, migration helpers
 ├── tools/              # Validators for module boundaries & prompts
 └── .github/            # CI/CD workflows (build, deploy, security scanning)
-```
+
 ---
 
 ## Key Architectural Concepts
@@ -97,32 +97,34 @@ fusionnet-submittal-mvp/
 ### Backend (.NET Core)
 - Implements Clean Architecture.
 
-  #### Responsible for:
-  - Authentication & authorization.
-  - Orchestrating workflows.
-  - Validating module boundaries.
-  - Exposing API endpoints.
-  - AI Services (Python)
-  - Independent ML modules (FastAPI).
-  
-  #### Functions:
-  - OCR: Google Vision, Azure Document Intelligence.
-  - Splitting: Deterministic PDF splitter.
-  - Classification: Cover-page identification, document type classification.
-  - Analysis: Claude AI integration for advanced checks.
-  
-  #### Claude-Code
-  - Prompt engineering workspace.
-  - Stores prompt templates, validation tests, examples, and deterministic output validators.
-  - Supports AI-driven compliance checks.
-  
-  #### Tests
-  **Organized by module:**
-  - FusionNet.Core.Tests → Domain logic.
-  - FusionNet.Application.Tests → Use cases.
-  - FusionNet.Integration.Tests → API + database.
-  - FusionNet.Performance.Tests → Load & benchmark tests.
-  - FusionNet.PromptTests → AI prompt validation.
+#### Responsible for:
+- Authentication & authorization.
+- Orchestrating workflows.
+- Validating module boundaries.
+- Exposing API endpoints.
+- AI Services (Python)
+- Independent ML modules (FastAPI).
+
+#### Functions:
+- OCR: Google Vision, Azure Document Intelligence.
+- Splitting: Deterministic PDF splitter.
+- Classification: Cover-page identification, document type classification.
+- Analysis: Claude AI integration for advanced checks.
+
+#### Claude-Code
+- Prompt engineering workspace.
+- Stores prompt templates, validation tests, examples, and deterministic output validators.
+- Supports AI-driven compliance checks.
+
+---
+
+#### Tests
+**Organized by module:**
+- FusionNet.Core.Tests → Domain logic.
+- FusionNet.Application.Tests → Use cases.
+- FusionNet.Integration.Tests → API + database.
+- FusionNet.Performance.Tests → Load & benchmark tests.
+- FusionNet.PromptTests → AI prompt validation.
 
 ---
 
@@ -147,13 +149,12 @@ fusionnet-submittal-mvp/
 **6. Submittals Review Flow →**
 - Check if data exists in splitted_data table.
 - If present → Fetch and pass directly to Splitting Agent.
-**- If not present :**
-   **- Analyzer Master Agent runs:**
+- If not present :
+   - **Analyzer Master Agent runs:**
       - Identifies document context and document type from OCR results.
-   **- Construction Agent:**
+   - **Construction Agent:**
       - Generates splitted metadata for the next module.
       - Saves metadata into database.
-
 **7. Splitting & Validation →** Continue workflow with splitting, compliance validation, HITL review.
 **8. Report Generation →** Compliance report produced.
 **9. Audit Logging →** All actions stored for traceability.
