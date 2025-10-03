@@ -155,6 +155,7 @@ fusionnet-submittal-mvp/
    - **Construction Agent:**
       - Generates splitted metadata for the next module.
       - Saves metadata into database.
+
 **7. Splitting & Validation →** Continue workflow with splitting, compliance validation, HITL review.
 **8. Report Generation →** Compliance report produced.
 **9. Audit Logging →** All actions stored for traceability.
