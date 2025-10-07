@@ -1,5 +1,4 @@
-```
-Mermaid
+```mermaid
 flowchart LR
     RO[registered_organizations] --> U[users]
     U --> P[projects]
