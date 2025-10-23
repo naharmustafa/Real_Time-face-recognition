@@ -1,175 +1,111 @@
-# Module Boundaries in FusionNet
-
-Module boundaries are a **critical part of FusionNet’s architecture**.  
-They ensure that each module is **independent, testable, and extractable** into its own microservice when the time comes.
-
----
-
-## Why Module Boundaries?
-
-- **Decoupling** → Modules can evolve independently.  
-- **Testability** → Each module can be tested in isolation.  
-- **Migration-readiness** → Easier extraction into microservices.  
-- **Resilience** → Failures in one module do not cascade into others.  
-- **Clarity** → Developers know where code should live.  
+# FusionNet Module Boundaries — v1.0
+**Version:** 1.0  
+**Date:** 2025-10-19  
+**Owner:** FusionNet Architecture Team  
 
 ---
 
-## 1. Current Modules (MVP)
-
-The MVP modules align directly with the Business Requirements (FR-###) and repository structure:
-
-1. **Review Orchestration**  
-   - **Role:** Manages workflow and sequencing of modules.  
-   - **Example:** Orchestrates “upload → split → validate → report”.  
-   - **Repo:** `backend/src/FusionNet.Modules.ReviewOrchestration/`  
-   - **Related FRs:** FR-302 (orchestration checkpoints)
-
-2. **Document Processing**  
-   - **Role:** OCR, classification, deterministic PDF splitting.  
-   - **Repo:** `backend/src/FusionNet.Modules.DocumentProcessing/`  
-   - **Related FRs:** FR-301 (uploads), FR-303 (analyzer), FR-303B (splitter), FR-304 (OCR)
-
-3. **Validation**  
-   - **Role:** Matches submittals against specifications; compliance checks.  
-   - **Repo:** `backend/src/FusionNet.Modules.Validation/`  
-   - **Related FRs:** FR-305 (spec validator), FR-306 (compliance classifier)
-
-4. **Report Generation**  
-   - **Role:** Produces standardized reports with version control.  
-   - **Repo:** `backend/src/FusionNet.Modules.ReportGeneration/`  
-   - **Related FRs:** FR-308 (report generator)
-
-5. **Audit**  
-   - **Role:** Logs every action for traceability.  
-   - **Repo:** `backend/src/FusionNet.Modules.Audit/`  
-   - **Related FRs:** FR-309 (HITL & checkpoints, audit logging)
+## 1. Purpose
+- Define strict boundaries for modules under `/src/FusionNet.Modules`.  
+- Ensure future extraction to microservices is straightforward.  
+- Provide contracts, database isolation, and CI validation rules.
 
 ---
 
-## 2.Rules of Module Boundaries
-
-- ❌ **No direct references** between modules.  
-  Example: `Validation` cannot import code from `Document Processing`.  
-
-- ✅ **Use Contracts and Events**  
-  - Shared **DTOs** or **event contracts** in `Contracts/`.  
-  - Communicate through **service bus events** or API calls.  
-
-- ✅ **Independent Configuration**  
-  - Each module has its own section in `appsettings.json`.  
-
-- ✅ **Dedicated Database Schema**  
-  - No shared schema/container between modules.  
-
-- ✅ **Custom Exceptions per Module**  
-  - Example: `ValidationException` belongs only to Validation.  
+## 2. Modules in Scope
+- **Review Orchestration:** Workflow state and coordination. No OCR or validation logic here.  
+- **Document Processing:** OCR, text extraction, and normalization. Deterministic and idempotent.  
+- **Validation:** Specification matching and compliance checks.  
+- **Report Generation:** Report assembly, templates, and versioning.  
+- **Audit:** Centralized event logging, lineage tracking, retries, and reviewer actions.
 
 ---
 
-## 3. Enforcement
-
-FusionNet enforces boundaries using:
-1. **Tools**  
-   - `tools/ModuleBoundaryValidator/` → checks illegal references.  
-
-2. **Scripts**  
-   - `scripts/module-boundary-check.ps1` → runs locally.  
-
-3. **CI/CD**  
-   - GitHub Action runs boundary validation on each PR.  
-   - PRs that break boundaries cannot be merged.  
+## 3. Boundary Rules
+- **No shared database:** Each module uses its own schema (PostgreSQL) or container (Cosmos DB).  
+- **Contracts, not references:** Modules communicate via REST or events. No direct class references.  
+- **Ownership:** Each module owns its schema, migrations, and health checks.  
+- **Allowed directions:** `API → Application → Modules`. Modules do not call each other by reference.  
+- **External AI:** Only *DocumentProcessing* and *Validation* may call AI services via REST. Calls must include project and submittal context.  
+- **Idempotency:** Section Splitter must be byte-identical for identical inputs (**FR-303B**).  
+- **Gating:** Spec Validator acts as a hard gate — on mismatch, mark *Revise and Resubmit* and stop flow.  
+- **HITL:** Five checkpoints are logged with reviewer, timestamps, and reasons.
 
 ---
 
-## 4. GitHub Labels for Boundary Tracking
-
-Labels help track module readiness for microservice extraction:
-
-| Label                    | Purpose |
-|---------------------------|---------|
-| `module:review-orchestration` | Tracks orchestration module |
-| `module:document-processing`  | Tracks OCR/splitting |
-| `module:validation`           | Tracks spec matching & compliance |
-| `module:report-generation`    | Tracks reporting |
-| `module:audit`                | Tracks auditing |
-| `extraction-ready`            | Module is microservice-ready |
-| `needs-refactor`              | Cleanup required before extraction |
-| `has-shared-db`               | DB schema shared (technical debt) |
-| `performance-impact`          | SLA/performance risk |
-| `idempotency-required`        | Must guarantee deterministic outputs |
-| `hitl-checkpoint`             | Human review point required |
+## 4. Contracts and APIs
+- REST endpoints are versioned; breaking changes require a new version.  
+- Event messages are documented in the **Contracts** folder and tested in CI.  
+- All inter-module calls include **correlation IDs** and **project context**.
 
 ---
 
-## 5. Pre-Extraction Checklist
-
-Before extracting any module into a microservice:
-
-### Code Preparation
-- [ ] No direct cross-module references.  
-- [ ] Interfaces/contracts live in `Contracts/`.  
-- [ ] Test coverage > 80%.  
-- [ ] Module-specific exceptions exist.  
-- [ ] Logging categories are module-specific.  
-
-### Infrastructure
-- [ ] Dedicated DB schema/container.  
-- [ ] Health check endpoint (`/health`).  
-- [ ] Metrics/telemetry configured.  
-- [ ] Retry + circuit breaker policies in place.  
-
-### CI/CD
-- [ ] Independent build pipeline.  
-- [ ] Separate deployment configuration.  
-- [ ] Secrets stored in Key Vault.  
-- [ ] Rollback procedures documented.  
-
-### Documentation
-- [ ] API docs complete.  
-- [ ] Runbooks updated.  
-- [ ] ADRs (Architecture Decision Records) documented.  
-- [ ] Disaster recovery plan exists.  
+## 5. Database Isolation
+- **PostgreSQL Schemas:**  
+  `orchestration`, `processing`, `validation`, `reporting`, `audit`  
+- **Cosmos DB Containers:**  
+  `processing_ocr`, `processing_extracts`, `validation_sections`, `reporting_artifacts`, `audit_events`  
+- No cross-schema writes; read access only through module APIs.
 
 ---
 
-## 6. Developer Guidelines
-
-- ✅ Define interfaces/contracts in `Application` or `Contracts`, implement in `Infrastructure`.  
-- ✅ Keep modules **autonomous** — no shared state.  
-- ✅ Add tests for module-specific functionality.  
-- ✅ Use **labels** when creating PRs/issues to track maturity.  
-
-- ❌ Do not share repositories/static classes across modules.  
-- ❌ Do not bypass contracts for quick fixes.  
-- ❌ Do not hardcode connections/configs inside a module.  
+## 6. CI Validation and Labeling
+- **ModuleBoundaryValidator** enforces references and directory boundaries during CI.  
+- **Labels:**  
+  - `extraction-ready`  
+  - `has-shared-db`  
+  - `idempotency-required`  
+  - `hitl-checkpoint`  
+  - `900-page-test`  
+- Feature branches require **CODEOWNERS** approval from respective module owners.
 
 ---
 
-## 7. Example Workflow Across Modules
-
-```mermaid
-sequenceDiagram
-    participant API as API Layer
-    participant DOC as Document Processing
-    participant VAL as Validation
-    participant REP as Report Generation
-    participant AUD as Audit
-
-    API->>DOC: Upload Submittal (OCR + Split)
-    DOC-->>API: Processed Sections
-    API->>VAL: Validate Against Specs
-    VAL-->>API: Compliance Results
-    API->>REP: Generate Report
-    REP-->>API: Report PDF
-    API->>AUD: Log Transaction
+## 7. Module Map with Allowed Edges
+- 7.1.	Figure - Module map with allowed edges
+``` mermaid
+flowchart TD
+    API[API Layer] --> APP[Application Layer]
+    APP --> MODS[Module Layer - src/FusionNet.Modules]
+    MODS --> ORCH[ReviewOrchestration]
+    MODS --> DP[DocumentProcessing]
+    MODS --> VAL[Validation]
+    MODS --> REP[ReportGeneration]
+    MODS --> AUD[Audit]
+    DP -. REST .- AI[AI Services - Python FastAPI]
+    VAL -. REST .- AI
+    ORCH -->|Events| AUD
+    VAL -->|Events| AUD
+    REP -->|Events| AUD
+    classDef layer fill:#f2f2f2,stroke:#555,stroke-width:1px;
+    classDef module fill:#e8f0fe,stroke:#1a73e8,stroke-width:1px;
+    classDef external fill:#fff7e6,stroke:#f5a623,stroke-width:1px;
+    class API,APP,MODS layer
+    class ORCH,DP,VAL,REP,AUD module
+    class AI external
 ```
-
+- 7.2.	Figure - Boundary test: no shared database
+``` mermaid
+flowchart TD
+    DP_DB[(PostgreSQL schema: processing)]
+    VAL_DB[(PostgreSQL schema: validation)]
+    REP_DB[(PostgreSQL schema: reporting)]
+    AUD_DB[(PostgreSQL schema: audit)]
+    COS_PROC[(Cosmos container: processing_ocr)]
+    COS_VAL[(Cosmos container: validation_sections)]
+    COS_REP[(Cosmos container: reporting_artifacts)]
+    COS_AUD[(Cosmos container: audit_events)]
+    DP_DB -. no cross writes .- VAL_DB
+    DP_DB -. no cross writes .- REP_DB
+    VAL_DB -. no cross writes .- REP_DB
+    COS_PROC -. isolated .- COS_VAL
+    COS_REP -. isolated .- COS_VAL
+```
 ---
 
-###  Summary
-- FusionNet modules are strictly separated with enforced boundaries.
-- Each module must be independent in code, DB, and config.
-- Validators + CI/CD checks guarantee enforcement.
-- GitHub labels + checklists track extraction readiness.
-- Following these rules ensures FusionNet evolves smoothly from monolith → microservices.
+## 8. References
+- **FusionNet Submittal Module BRD** — FR-303B Idempotency, FR-305 Spec Validation Gate, FR-309 HITL Policy.  
+- **GitHub Setup Guide** — ModuleBoundaryValidator, Labels, Repository Structure, Contracts.  
+- **Architecture Overview** — Layers and Technology Mapping.
+
+---
