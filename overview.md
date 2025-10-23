@@ -34,22 +34,18 @@ Requests flow to the **Application Layer** (use cases and orchestration logic), 
 ### 3.2 Module Layer
 Implements all domain-specific functionality:
 
-| Module | Function |
-|---------|-----------|
-| **A. Review Orchestration** | Coordinates workflow execution and inter-module calls |
-| **B. Document Processing** | Manages OCR, text extraction, and normalization |
-| **C. Validation** | Runs specification and compliance checks, flags HITL reviews |
-| **D. Report Generation** | Compiles and formats outputs with spec-section-based referencing |
-| **E. Audit** | Captures events, retries, and lineage for traceability |
+- **Review Orchestration:** Coordinates workflow execution and inter-module calls.  
+- **Document Processing:** Manages OCR, text extraction, and normalization.  
+- **Validation:** Runs specification and compliance checks, flags HITL reviews.  
+- **Report Generation:** Compiles and formats outputs with spec-section-based referencing.  
+- **Audit:** Captures events, retries, and lineage for traceability.
 
 AI-assisted operations (OCR, classification, compliance analysis) use **Python-based AI Services** (FastAPI microservices).  
 These services run independently from the main monolith and return structured JSON responses to the .NET backend.
 
 ### 3.3 Data Persistence
-| Storage | Purpose |
-|----------|----------|
-| **PostgreSQL** | Structured project, workflow, and checkpoint data |
-| **Cosmos DB** | Document content, OCR outputs, and AI artifacts |
+- **PostgreSQL:** Structured project, workflow, and checkpoint data.  
+- **Cosmos DB:** Document content, OCR outputs, and AI artifacts.  
 
 All modules use **Microsoft Entra ID (OIDC)** for authentication and authorization.  
 Tokens propagate across .NET and Python services for consistent identity scoping and tenant isolation.
@@ -63,14 +59,13 @@ Tokens propagate across .NET and Python services for consistent identity scoping
 ---
 
 ## 4. Data Persistence
-- **PostgreSQL:** Projects, submittal index, workflow states, checkpoints, report metadata (schema per module)  
-- **CosmosDB:** OCR results, extracted content, AI artifacts (container per module)  
-- **Isolation:** No shared schemas/containers; inter-module access only via APIs/events  
+- **PostgreSQL:** Projects, submittal index, workflow states, checkpoints, report metadata (schema per module).  
+- **CosmosDB:** OCR results, extracted content, AI artifacts (container per module).  
+- **Isolation:** No shared schemas/containers; inter-module access only via APIs/events.  
 
 ---
 
 ## 5. Technology Stack
-
 | Layer | Technology | Purpose |
 |-------|-------------|----------|
 | **Frontend** | Angular 16 | UI and workflow |
@@ -103,18 +98,21 @@ Tokens propagate across .NET and Python services for consistent identity scoping
 ---
 
 ## 8. Deployment & CI/CD Topology
-- **Branching:**  
-  - `develop` as integration branch  
-  - `feature/*` → PRs with CODEOWNERS reviews  
-  - `release/*` → staging  
-  - `main` protected  
 
-- **Pipelines:** Build, test, module-boundary validation, security scans, and deploy to dev/stage/prod.  
-  Secrets managed via **Azure Key Vault** / **GitHub Secrets**.
+### 8.1 Branching Strategy
+- **main** → Always stable and production-ready branch.  
+- **develop** → Integration branch for ongoing development.  
+- **feature/*** → Short-lived branches for new features or enhancements; merged into `develop` after review.  
+- **hotfix/*** → Emergency fixes branched from `main`; merged back into both `main` and `develop` once validated.  
+- **release/*** → Pre-production branches for staging, QA, and final verification before production release.  
 
-- **Environments:**  
-  - Environment-specific configs  
-  - Hangfire dashboards per environment  
-  - Telemetry and alerts mapped to SLAs  
+### 8.2 Pipelines
+Build, test, module-boundary validation, security scans, and deployment to dev/stage/prod.  
+Secrets managed via **Azure Key Vault** or **GitHub Secrets**.
+
+### 8.3 Environments
+Per-environment configurations with:  
+- Dedicated Hangfire dashboards per environment  
+- Telemetry and alerts mapped to SLAs  
 
 ---
