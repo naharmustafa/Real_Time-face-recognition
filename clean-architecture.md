@@ -5,12 +5,9 @@
 ---
 
 ## 1. Purpose
-### 1.1
-Define the FusionNet MVP layering model and allowed dependency rules.  
-### 1.2
-Provide a stable reference for engineers, QA, and DevOps.  
-### 1.3
-Exclude business workflows and personas which live in the *System Overview*.
+#### 1.1 Define the FusionNet MVP layering model and allowed dependency rules.  
+#### 1.2 Provide a stable reference for engineers, QA, and DevOps.  
+#### 1.3 Exclude business workflows and personas which live in the *System Overview*.
 
 ---
 
