@@ -51,10 +51,99 @@ All modules use **Microsoft Entra ID (OIDC)** for authentication and authorizati
 Tokens propagate across .NET and Python services for consistent identity scoping and tenant isolation.
 
 ### 3.4 High-Level Component Architecture
-*(Diagram placeholder)*
+``` mermaid
+flowchart TD
+    %% ----- LAYER NODES -----
+    FE[Angular Frontend]
+    API[ASP NET Core API Gateway - NET 8]
+    APP[Application Layer - Use Cases]
+    INFRA[Infrastructure Layer]
+    MODS[Module Layer - src/FusionNet.Modules]
+
+    %% ----- MODULE NODES -----
+    ORCH[ReviewOrchestration]
+    DP[DocumentProcessing]
+    VAL[Validation]
+    REP[ReportGeneration]
+    AUD[Audit]
+
+    %% ----- EXTERNAL / DATA / IDENTITY -----
+    AI[AI Services - Python FastAPI]
+    PG[PostgreSQL]
+    COS[Cosmos DB]
+    ENTRA[Microsoft Entra ID - OIDC]
+
+    %% ----- PRIMARY FLOW -----
+    FE -->|REST calls| API
+    API --> APP
+    APP --> INFRA
+    INFRA --> MODS
+
+    %% ----- MODULE EXPANSION -----
+    MODS --> ORCH
+    MODS --> DP
+    MODS --> VAL
+    MODS --> REP
+    MODS --> AUD
+
+    %% ----- INTEGRATIONS -----
+    MODS --> AI
+    MODS --> PG
+    MODS --> COS
+
+    %% ----- IDENTITY TRUST BOUNDARY (DASHED) -----
+    INFRA --> ENTRA
+    ENTRA -.-> API
+    ENTRA -.-> AI
+    ENTRA -.-> MODS
+
+    %% ----- STYLES -----
+    classDef layer fill:#f2f2f2,stroke:#555,stroke-width:1px;
+    classDef module fill:#e8f0fe,stroke:#1a73e8,stroke-width:1px;
+    classDef external fill:#fff7e6,stroke:#f5a623,stroke-width:1px;
+    classDef datastore fill:#e8ffe8,stroke:#34a853,stroke-width:1px;
+    classDef identity fill:#ffe8ee,stroke:#d93025,stroke-width:1px,stroke-dasharray:3 3;
+
+    class FE,API,APP,INFRA,MODS layer
+    class ORCH,DP,VAL,REP,AUD module
+    class AI external
+    class PG,COS datastore
+    class ENTRA identity
+```
 
 ### 3.5 Module Interaction & Contracts
-*(Diagram placeholder)*
+``` mermaid
+sequenceDiagram
+    participant FE as Frontend (Angular)
+    participant API as API (.NET 8)
+    participant ORCH as Review Orchestration
+    participant DP as Document Processing
+    participant AI as AI Services (Python FastAPI)
+    participant VAL as Validation
+    participant REP as Report Generation
+    participant AUD as Audit
+    participant PG as PostgreSQL
+    participant COS as Cosmos DB
+
+    FE->>API: POST /api/submittals
+    API->>ORCH: StartReview(request)
+    ORCH->>DP: PrepareOCR(documentRef)
+    DP->>AI: POST /ocr
+    AI-->>DP: OCR payload (JSON)
+    DP->>COS: Store OCR results
+    ORCH->>VAL: Validate(specRef, documentRefs)
+    VAL->>COS: Read extracted sections
+    VAL->>PG: Update status and checkpoints
+    VAL-->>ORCH: ValidationResult
+    ORCH->>REP: Generate(reportSpec)
+    REP->>COS: Read artifacts
+    REP->>PG: Save report metadata
+    API-->>FE: Review status and artifact links
+    ORCH->>AUD: Emit events (checkpoints, retries, errors)
+
+    Note over FE,AI: All service calls secured via Entra ID tokens (OIDC)
+    Note over DP,COS: Cosmos DB stores OCR results and AI artifacts
+    ```
 
 ---
 
