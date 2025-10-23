@@ -1,210 +1,120 @@
-# FusionNet Architecture Overview
-
-This document provides a **comprehensive overview** of the FusionNet MVP architecture.  
-It is designed as the first stop for new developers joining the project, giving them the **context, structure, workflows, and best practices** needed to contribute effectively.
-
----
-
-## 🎯 Purpose of FusionNet
-
-FusionNet is a **submittal review and compliance automation platform**.
-It ingests technical documents (PDFs, drawings, product data), extracts and validates their contents, and generates compliance reports.  
-
-Key objectives:
-- Automate repetitive **document checks** (OCR, metadata extraction, spec validation).
-- Support **human-in-the-loop (HITL)** reviews where manual intervention is needed.
-- Provide **end-to-end traceability** through audit logs and reports.
-- Meet **performance SLAs**:  
-  - 10 minutes maximum for full workflow.  
-  - 2-3 minutes for splitting/processing 900-page PDFs.
+# FusionNet Architecture Overview — v2.6 (Structural Focus)
+**Version:** 2.6  
+**Date:** 2025-10-19  
 
 ---
 
-##  Why Monolith First?
+## 1. Purpose
+### 1.1 Scope
+Technical architecture for the **FusionNet MVP Clean/Onion Monolith (Architecture F)**.  
+Covers component relationships, module boundaries, communication flows, and platform technologies.
 
-FusionNet follows a **monolith-first strategy** for the MVP phase.
+### 1.2 Audience
+Architects, engineers, DevOps, and QA.
 
-- **Timeline** → The MVP must be delivered in **10 weeks**. A single repository allows rapid iteration.  
-- **Consistency** → All components (frontend, backend, AI services) live together for simpler coordination.  
-- **Future-proofing** → We design using **clean architecture + module boundaries**, so the system can be extracted into **microservices** later without major rework.  
-
-**Planned Evolution**:  
-- **Phase 1 (Now)** → Monolith MVP.  
-- **Phase 2 (Month 4)** → Prepare modules for extraction using labels & checklists.  
-- **Phase 3 (Month 6)** → Begin extraction into separate repositories (`fusionnet-document-processing`, `fusionnet-validation`, etc.).  
+### 1.3 Out of Scope
+Business scope, personas, and detailed process/HITL procedures (see *System Overview*).
 
 ---
 
-## 🏗️ Repository Structure
-```
-fusionnet-submittal-mvp/
-├── frontend/           # Angular application
-├── backend/            # .NET Core (Domain, Application, Infrastructure, API)
-├── ai-services/        # Python services (OCR, ML models, FastAPI APIs)
-├── claude-code/        # Prompt templates & validation logic
-├── tests/              # Unit, integration, performance, prompt tests
-├── docs/               # Documentation (this folder)
-├── scripts/            # Setup, validation, migration helpers
-├── tools/              # Validators for module boundaries & prompts
-└── .github/            # CI/CD workflows (build, deploy, security scanning)
-```
----
-
-## Key Architectural Concepts
-
-### Layers (Clean Architecture)
-1. **Core (Domain)**  
-   - Entities, Value Objects, Aggregates, Domain Exceptions.
-   - Pure business rules, no dependencies.
-   - Example: Submittal, Reviewer, DocumentSection.
-
-2. **Application**  
-   - UseCases, DTOs, Services, Mappings.
-   - Orchestration of business workflows.
-   - Example: ValidateSubmittalUseCase, SplitPdfUseCase.
-
-3. **Infrastructure**  
-   - External adapters:
-      - **Persistence:** CosmosDB, PostgreSQL.
-      - **Auth:** Microsoft Entra ID.
-      - **Workflow:** Hangfire background jobs.
-   - Implements interfaces defined in Core & Application.
-
-4. **API (Presentation)**  
-   - ASP.NET Core controllers, middleware, filters.
-   - Exposes REST endpoints to frontend & integrations.
-   - Example: /api/auth/login, /api/auth/logout, /api/projects/createproject.
+## 2. Architectural Strategy
+- **Monolith-first:** Clean/Onion Monolith for MVP to minimize integration overhead and accelerate delivery.  
+- **Modularity:** Strict boundaries; contracts (APIs/events) over direct references; no shared databases.  
+- **Migration path:** Extraction-ready seams and ADRs documented for later service decomposition.
 
 ---
 
-## 🔑 Guiding Principles
-- **Module boundaries enforced** by `ModuleBoundaryValidator` and CI checks.
-- **No shared database** → each module has its own schema/container.
-- **Contracts not references** → inter-module communication through APIs/events.
-- **Performance SLA**:
-  - 10 min end-to-end
-  - 2-3 min for splitting 900-page PDFs
-- **Human-in-the-loop checkpoints** for compliance & validation.
+## 3. System Architecture Overview
+### 3.1 Narrative
+The FusionNet system follows a **layered, modular monolith pattern** with an external AI integration layer.  
+User interactions begin in the **Angular frontend**, which communicates through **REST APIs** with the **ASP.NET Core API Gateway**.
+
+Requests flow to the **Application Layer** (use cases and orchestration logic), then to the **Infrastructure Layer** (data access, background jobs, external services, and integrations).
+
+### 3.2 Module Layer
+Implements all domain-specific functionality:
+
+| Module | Function |
+|---------|-----------|
+| **A. Review Orchestration** | Coordinates workflow execution and inter-module calls |
+| **B. Document Processing** | Manages OCR, text extraction, and normalization |
+| **C. Validation** | Runs specification and compliance checks, flags HITL reviews |
+| **D. Report Generation** | Compiles and formats outputs with spec-section-based referencing |
+| **E. Audit** | Captures events, retries, and lineage for traceability |
+
+AI-assisted operations (OCR, classification, compliance analysis) use **Python-based AI Services** (FastAPI microservices).  
+These services run independently from the main monolith and return structured JSON responses to the .NET backend.
+
+### 3.3 Data Persistence
+| Storage | Purpose |
+|----------|----------|
+| **PostgreSQL** | Structured project, workflow, and checkpoint data |
+| **Cosmos DB** | Document content, OCR outputs, and AI artifacts |
+
+All modules use **Microsoft Entra ID (OIDC)** for authentication and authorization.  
+Tokens propagate across .NET and Python services for consistent identity scoping and tenant isolation.
+
+### 3.4 High-Level Component Architecture
+*(Diagram placeholder)*
+
+### 3.5 Module Interaction & Contracts
+*(Diagram placeholder)*
 
 ---
 
-## System Components
-### Frontend (Angular)
-- Provides UI for project creation, submittal uploads, reviewer workspace.
-- Calls backend APIs via REST.
-- Roles enforced via JWT tokens from Entra ID.
-
-### Backend (.NET Core)
-- Implements Clean Architecture.
-
-#### Responsible for:
-- Authentication & authorization.
-- Orchestrating workflows.
-- Validating module boundaries.
-- Exposing API endpoints.
-- AI Services (Python)
-- Independent ML modules (FastAPI).
-
-#### Functions:
-- OCR: Google Vision, Azure Document Intelligence.
-- Splitting: Deterministic PDF splitter.
-- Classification: Cover-page identification, document type classification.
-- Analysis: Claude AI integration for advanced checks.
-
-#### Claude-Code
-- Prompt engineering workspace.
-- Stores prompt templates, validation tests, examples, and deterministic output validators.
-- Supports AI-driven compliance checks.
+## 4. Data Persistence
+- **PostgreSQL:** Projects, submittal index, workflow states, checkpoints, report metadata (schema per module)  
+- **CosmosDB:** OCR results, extracted content, AI artifacts (container per module)  
+- **Isolation:** No shared schemas/containers; inter-module access only via APIs/events  
 
 ---
 
-#### Tests
-**Organized by module:**
-- FusionNet.Core.Tests → Domain logic.
-- FusionNet.Application.Tests → Use cases.
-- FusionNet.Integration.Tests → API + database.
-- FusionNet.Performance.Tests → Load & benchmark tests.
-- FusionNet.PromptTests → AI prompt validation.
+## 5. Technology Stack
+
+| Layer | Technology | Purpose |
+|-------|-------------|----------|
+| **Frontend** | Angular 16 | UI and workflow |
+| **API Gateway** | .NET 8 / ASP.NET Core | REST endpoints and auth pipeline |
+| **Application** | .NET 8 | Use cases and orchestration |
+| **Modules** | .NET 8 | Core domain services |
+| **AI Services** | Python (FastAPI), Claude Opus/Sonnet, GPT-4 Vision | OCR, classification, analysis |
+| **Persistence** | PostgreSQL / CosmosDB | Structured vs. document data |
+| **Jobs/Queues** | Hangfire / MassTransit | Workflow jobs, retries, isolation per module |
+| **Auth** | Microsoft Entra ID (OIDC) | Authentication and authorization |
+| **Observability** | Azure App Insights | Telemetry, traces, alerts |
 
 ---
 
-### Typical Workflow
-
-**1. Authentication →** User logs in with Microsoft Entra ID.
-
-**2. Project Creation →**
-- Organization admin creates a project.
-- Project includes a type field (e.g., Submittals Review, RFP, etc.).
-
-**3. Upload Submittal →** User uploads PDF/document.
-
-**4. Immediate OCR Processing →**
-- OCR runs right after upload.
-- Extracted data stored in Postgres with references to user, project, and file name.
-
-**5. Orchestrator Agent Starts →**
-- Reads project type and triggers different flows.
-- Example: Submittals Review flow.
-
-**6. Submittals Review Flow →**
-- Check if data exists in splitted_data table.
-- If present → Fetch and pass directly to Splitting Agent.
-- If not present :
-   - **Analyzer Master Agent runs:**
-      - Identifies document context and document type from OCR results.
-   - **Construction Agent:**
-      - Generates splitted metadata for the next module.
-      - Saves metadata into database.
-
-**7. Splitting & Validation →** Continue workflow with splitting, compliance validation, HITL review.
-
-**8. Report Generation →** Compliance report produced.
-
-**9. Audit Logging →** All actions stored for traceability.
+## 6. Design Constraints & Non-Functional Requirements
+- **Performance:** End-to-end ≤10 minutes (excluding human steps); splitting ≤2 minutes for 400 pages; 900-page baseline = stretch goal.  
+- **Idempotency:** *(FR-303B)* Repeated runs produce byte-identical outputs for deterministic steps.  
+- **Reliability:** Retry policy — 3 attempts with exponential backoff; all errors/retries logged in Audit.  
+- **Security:** Every request scoped by `organization_id + project_id`; Entra ID tokens; least-privilege roles.  
+- **Health:** Startup health checks per module; Hangfire with per-module schema.  
+- **CI Validation:** Contracts and module boundaries validated in CI; ADRs recorded for architecture changes.
 
 ---
 
-### flowchart TD
-```mermaid
-flowchart TD
-    A[Login via Entra ID] --> B[Create Project: Type]
-    B --> C[Upload Submittal]
-    C --> D[Immediate OCR & Store in Postgres]
-    D --> E[Orchestrator Agent Starts]
-
-    E -->|Submittals Review| F{Check splitted_data table?}
-    F -->|Yes| G[Fetch Data -> Splitting Agent]
-    F -->|No| H[Analyzer Master Agent: Detect Context & Type]
-    H --> I[Construction Agent: Create Splitted Metadata & Store]
-    I --> G
-
-    G --> J[Validation Engine]
-    J --> K{Reviewer Checkpoint}
-    K -->|Approve| L[Generate Compliance Report]
-    K -->|Reject| M[Send Back for Fix]
-    L --> N[Audit & Archive]
-```
+## 7. Integration & Communication
+- **API Contracts:** REST-first, versioned, backward-compatible endpoints.  
+- **Events:** Module events for long-running jobs and audit lineage; isolated queues and dead-letter policies per module.  
+- **Error Handling:** Circuit breakers, rate limits for external dependencies; deterministic fallbacks for OCR.
 
 ---
 
-### Tech Stack
+## 8. Deployment & CI/CD Topology
+- **Branching:**  
+  - `develop` as integration branch  
+  - `feature/*` → PRs with CODEOWNERS reviews  
+  - `release/*` → staging  
+  - `main` protected  
 
-- **Frontend:** Angular 16, TypeScript.
-- **Backend:** .NET 8 (C#), ASP.NET Core Web API.
-- **Databases:** PostgreSQL, Azure CosmosDB.
-- **AI Services:** Python (FastAPI, PyTorch, OpenAI/Claude APIs).
-- **Authentication:** Microsoft Entra ID (OIDC).
-- **CI/CD:** GitHub Actions, Docker, Azure App Service.
-- **Security:** Snyk, TruffleHog, Dependabot, SonarQube.
-- **Monitoring:** Azure Application Insights, Teams Alerts.
+- **Pipelines:** Build, test, module-boundary validation, security scans, and deploy to dev/stage/prod.  
+  Secrets managed via **Azure Key Vault** / **GitHub Secrets**.
+
+- **Environments:**  
+  - Environment-specific configs  
+  - Hangfire dashboards per environment  
+  - Telemetry and alerts mapped to SLAs  
 
 ---
-
-### Developer Practices
-
-- **Branching Strategy:** main (stable), develop (active dev).
-- **Commit Messages:** Conventional commits (feat(module): description).
-- **Code Reviews:** Enforced via CODEOWNERS + PR approvals.
-- **Testing:** >80% coverage required for core modules.
-- **Documentation:** Every feature/update must include docs & ADRs.
-- **Secrets:** Never in code → always in GitHub Secrets / Key Vault.
