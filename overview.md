@@ -143,7 +143,7 @@ sequenceDiagram
 
     Note over FE,AI: All service calls secured via Entra ID tokens (OIDC)
     Note over DP,COS: Cosmos DB stores OCR results and AI artifacts
-    ```
+```
 
 ---
 
