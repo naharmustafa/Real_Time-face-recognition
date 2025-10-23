@@ -83,5 +83,5 @@ flowchart TD
 
     class API,APP,CORE,INFRA layer
     class AI external
-```
     class E ai
+```
